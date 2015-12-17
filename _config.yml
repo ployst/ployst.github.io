@@ -7,11 +7,11 @@
 
 # Site settings
 title: Ployst Blog
-email: your-email@domain.com
+email: 
 description: The latest news from the ployst team
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://blog.ployst.com" # the base hostname & protocol for your site
-twitter_username: 
+twitter_username:
 github_username:  ployst
 
 # Build settings
