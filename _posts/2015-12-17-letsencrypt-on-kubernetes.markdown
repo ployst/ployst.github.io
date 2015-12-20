@@ -9,6 +9,10 @@ tags: kubernetes
 Below I will describe an approach as to how to get a proxy running that handles
 SSL termination and certificate regeneration using letsencrypt.org.
 
+Please note that there are strict low quotas on the production letsencrypt
+endpoint,[use the --server flag][letsencrypt-staging-please] to specify the
+staging server during testing or face being locked out for a week.
+
 ## Problem
 
 You've got a cat naming service, you've containerized it and it is running
@@ -35,12 +39,6 @@ automate fetching new ones.
 
 The verification step is done by expecting a shared secret to be present at
 a particular url on the domain being certified.
-
-[TODO: put this in a box or something]
-
-WARNING: There are strict low quotas on the production letsencrypt endpoint,
-[use the --server flag][letsencrypt-staging-please] to specify the staging
-server during testing or face being locked out for a week.
 
 But for letsencrypt to work with our proxy, we need to be able to:
 
@@ -115,8 +113,8 @@ It will store the result in a secret named
 `certs-example.com` with filenames that are usable by the `nginx-ssl-proxy`
 container.
 
-It will restart all containers that are owned by the rc named:
-`nginx-ssl-proxy-api`
+It will restart all containers that are owned by the rc named
+`nginx-ssl-proxy-api` using `rolling-update`.
 
 It also supports using the letsencrypt staging endpoint. simply add this to
 your yaml env section:
@@ -160,6 +158,8 @@ to create the correct configuration. Assuming that you have a service named
 
 ## Resulting picture
 
+[ TODO: Add picture ]
+
 ## Future Changes
 
 ### SSL Termination
@@ -168,17 +168,13 @@ I'm led to believe that from kubernetes 1.2 the ingress resource will support
 https and SSL termination. When this happens, the proxy will probably be
 unnecessary.
 
-### Secrets
-
-There is some discussion about changes to secrets propagating through to their
-mounted points. When this happens we won't need to restart containers after an
-update to a Secret.[TODO: link]
-
 ### Cron
 
 Cron is not the long term solution to scheduled jobs in kubernetes. Soon, it
 will be possible to schedule jobs to run at particular times in which case the
-current cron can be moved into such a job [TODO: discussion link].
+current cron can be moved into such a job. The discussion around this feature
+can be found [here][kubernetes-cron]
 
 [nginx-ssl-proxy-walkthrough]: https://github.com/GoogleCloudPlatform/nginx-ssl-proxy
 [letsencrypt-staging-please]: https://community.letsencrypt.org/t/testing-against-the-lets-encrypt-staging-environment/6763
+[kubernetes-cron]: https://github.com/kubernetes/kubernetes/issues/2156
