@@ -2,7 +2,8 @@
 layout: post
 title:  "Kubernetes + Letsencrypt"
 date:   2015-12-17 09:41:53 +0000
-categories: kubernetes development
+categories: development
+tags: kubernetes
 ---
 
 Below I will describe an approach as to how to get a proxy running that handles
@@ -28,28 +29,32 @@ is available on the kubernetes blog to get an idea of how this termination works
 
 ## Getting a certificate
 
-Letsencrypt is great to use - it'll give us a free 90-day certificate for the
-cat name service, and we can completely automate fetching new ones.
+[Letsencrypt](https://letsencrypt.org/about/) is great to use - it'll give us
+a free 90-day certificate for the cat name service, and we can completely
+automate fetching new ones.
+
+The verification step is done by expecting a shared secret to be present at
+a particular url on the domain being certified.
 
 [TODO: put this in a box or something]
+
 WARNING: There are strict low quotas on the production letsencrypt endpoint,
 [use the --server flag][letsencrypt-staging-please] to specify the staging
 server during testing or face being locked out for a week.
 
-But for letsencrypt to work with our proxy, we need:
+But for letsencrypt to work with our proxy, we need to be able to:
 
- - To be able to trigger a certificate fetch
- - To be able to serve the challenge that letsencrypt gives us (verification)
- - To be able to store the certificate somewhere that the proxies will have
-   access to.
+ - trigger a certificate fetch
+ - serve the challenge that letsencrypt gives us (verification)
+ - store the certificate somewhere that the proxies will have access to.
 
 ## Secrets magic
 
 Kubernetes [secrets](http://kubernetes.io/v1.1/docs/user-guide/secrets.html)
 allow sensitive information to be stored outside of your application but
 accessible by any containers in the namespace. This is a great way to store
-certificates that will be updated infrequently but read by potentially many
-proxies.
+private keys and certificates that will be updated infrequently but read by
+potentially many proxies.
 
 The [walkthrough][nginx-ssl-proxy-walkthrough] shows how these can be used with
 the nginx-ssl-proxy to provide your proxy with certificates
@@ -60,8 +65,9 @@ the nginx-ssl-proxy to provide your proxy with certificates
 [ployst/letsencrypt](https://hub.docker.com/r/ployst/letsencrypt/) is a docker
 container that provides:
 
- - Monthly certificate fetch
- - Storage of certificates
+ - Monthly certificate/key regeneration
+ - Storage of artifacts
+ - Restarting of containers that use the certificates + keys.
 
  Example configuration:
 
