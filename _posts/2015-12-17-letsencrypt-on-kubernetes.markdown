@@ -17,7 +17,7 @@ connections made.
 
 Here's the state of your cat-name serving API:
 
-[TODO: Image, including pods, services, RCs]
+![Cat naming start state](/assets/images/letsencrypt-catnames01.png){: .center-image }
 
 ## SSL Termination proxy
 
@@ -142,7 +142,7 @@ the TARGET_SERVICE is by the proxy:
 
 In kubernetes, we can use the env variables that are exposed in all containers
 to create the correct configuration. Assuming that you have a service named
-'CERTS' pointing to the letsencrypt container:
+'LETSENCRYPT-SERVICE' pointing to the letsencrypt container:
 
 {% highlight yaml %}
     spec:
@@ -151,14 +151,23 @@ to create the correct configuration. Assuming that you have a service named
         image: ployst/nginx-ssl-proxy:0.0.3
         env:
         - name: CERT_SERVICE_HOST_ENV_NAME
-          value: CERTS_SERVICE_HOST
+          value: LETSENCRYPT_SERVICE_SERVICE_HOST
         - name: CERT_SERVICE_PORT_ENV_NAME
-          value: CERTS_SERVICE_PORT
+          value: LETSENCRYPT_SERVICE_SERVICE_PORT
 {% endhighlight %}
 
-## Resulting picture
+## Final architecture
 
-[ TODO: Add picture ]
+![Cat naming start state](/assets/images/letsencrypt-catnames02.png)
+
+ - Challenge requests made by letsencrypt.org are routed through to the
+   container that kicked off the certification process.
+ - `nginx-ssl-proxy-api-1` pod has a mounted secret that is populated by
+   `letsencrypt-rc-1`
+ - `letsencrypt-rc-1` will restart (using a rolling deploy) all containers
+   controlled by `nginx-ssl-proxy-api` after a secret updated
+ - All https requests are routed through to the cat naming service application
+ - All other http requests are redirected to https
 
 ## Future Changes
 
