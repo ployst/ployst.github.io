@@ -1,8 +1,9 @@
 ---
 layout: post
 title:  "Kubernetes + Letsencrypt"
-date:   2015-12-17 09:41:53 +0000
+date:   2015-12-22 18:19:53 +0000
 categories: development
+author: Alex Couper
 tags: kubernetes
 ---
 
