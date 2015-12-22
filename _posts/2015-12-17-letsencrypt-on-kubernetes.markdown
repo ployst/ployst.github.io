@@ -132,7 +132,7 @@ of the GoogleCloudPlatform repo that supports an additional env variable:
 
     CERT_SERVICE
 
-All requests to /.well-known/acme-challenge will be routed through to that
+All requests to `/.well-known/acme-challenge` will be routed through to that
 service.
 
 It can be constructed from two additional env variables in the same way that
