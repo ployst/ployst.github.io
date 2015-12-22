@@ -9,10 +9,6 @@ tags: kubernetes
 Below I will describe an approach as to how to get a proxy running that handles
 SSL termination and certificate regeneration using letsencrypt.org.
 
-Please note that there are strict low quotas on the production letsencrypt
-endpoint,[use the --server flag][letsencrypt-staging-please] to specify the
-staging server during testing or face being locked out for a week.
-
 ## Problem
 
 You've got a cat naming service, you've containerized it and it is running
@@ -123,6 +119,10 @@ your yaml env section:
 - name: LETSENCRYPT_ENDPOINT
   value: https://acme-staging.api.letsencrypt.org/directory
 {% endhighlight %}
+
+> Please note that there are strict low quotas on the production letsencrypt
+endpoint, use the LETSENCRYPT_ENDPOINT env var to to specify the staging server
+during testing or face being locked out for a week.
 
 ## A letsencrypt-friendly ssl-terminating proxy
 
