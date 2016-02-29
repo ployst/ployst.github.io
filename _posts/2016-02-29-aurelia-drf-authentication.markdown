@@ -3,7 +3,7 @@ layout: post
 title:  "Authentication using JWT with Aurelia and Django"
 date:   2016-02-29 16:00:00 +0000
 categories: development
-author: Carles Barrobes
+author: Carles Barrobés
 tags: aurelia
 ---
 
