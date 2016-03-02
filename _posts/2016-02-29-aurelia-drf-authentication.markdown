@@ -44,12 +44,12 @@ for the HTTP `Authorization` header, as it has different defaults in both
 libraries - `Bearer` in `aurelia-auth` and `JWT` in `djangorestframework_jwt`).
 
 We won't go into much detail here about JWT and when you should use them,
-you will find some relevant [links to places][jwt] in case you want to dive
+you can check [JWT.io][jwt] should you want to dive
 deeper. As a few key points for our use case:
 
 - Tokens are self-contained: the token itself can be used to encode information
   about the user (like username and email)
-- Tokens are secure: the data is protected cryptographically to guarantees
+- Tokens are secure: the data is protected cryptographically to guarantee
   origin
 - Tokens can contain an expiry date as part of the payload
 - Tokens can be passed along across different services for delegated access
@@ -75,7 +75,7 @@ new cycle.
 
 We want to make sure that we are not logging our users out too frequently,
 while still keeping the tokens short lived, so we automate the process of token
-renewal so that it's transparent to the user.
+renewal so that it's to some degree transparent to the user.
 
 
 ### The cycle of Tokens
