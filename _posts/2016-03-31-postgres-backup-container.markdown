@@ -1,11 +1,13 @@
 ---
 layout: post
 title:  "Cloning a postgres database with docker"
-date:   2016-03-27 19:45:53 +0000
+date:   2016-03-31 19:45:53 +0000
 categories: development
 author: Alex Couper
 tags: kubernetes docker postgres
 ---
+
+#### Introducing [postgres-backup][pg-backup-github]: A docker image that allows us to clone postgres databases for easy testing.
 
 We've recently been working on reorganizing some of the underlying data model
 for user accounts and access in Ployst.
@@ -27,16 +29,19 @@ Given two database containers named `api-db` and `api-db-backup`:
 
 {% highlight shell %}
 $ docker ps
-CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                     NAMES
-8aa0377b56f9        postgres:9.5.1      "/docker-entrypoint.s"   5 minutes ago       Up 5 minutes        0.0.0.0:32813->5432/tcp   api-db-backup
-c4a023e46b2a        postgres            "/docker-entrypoint.s"   2 days ago          Up 2 days           0.0.0.0:5432->5432/tcp    api-db
+CONTAINER ID        IMAGE               PORTS                     NAMES
+8aa0377b56f9        postgres:9.5.1      0.0.0.0:32813->5432/tcp   api-db-backup
+c4a023e46b2a        postgres            0.0.0.0:5432->5432/tcp    api-db
 {% endhighlight %}
 
 Running this command would create a backup of `api-db`'s `main` db and load it into
 `api-db-backup` as `main2`:
 
 {% highlight shell %}
-$ docker run -it --link api-db:db  --link api-db-backup:db2 -e SOURCE_PG_HOST=db -e SOURCE_PG_USER=user1 -e SOURCE_PG_DBNAME=main -e TARGET_PG_HOST=db2 -e TARGET_PG_USER=user1 -e TARGET_PG_DBNAME=main2 ployst/postgres-backup
+$ docker run -it --link api-db:db  --link api-db-backup:db2 \
+  -e SOURCE_PG_HOST=db -e SOURCE_PG_USER=user1 -e SOURCE_PG_DBNAME=main \
+  -e TARGET_PG_HOST=db2 -e TARGET_PG_USER=user1 -e TARGET_PG_DBNAME=main2 \
+  ployst/postgres-backup
 {% endhighlight %}
 
 
@@ -58,13 +63,13 @@ say I'm brave enough to expose dbs to the public network). We use an
 ## Future work
 
 I can foresee the [ployst/postgres-backup][pg-backup-github]
-image evolving to be able to use an existing dump (eg if you're ok with last nights
-backup).
+image evolving to be able to use an existing dump (eg if you're OK with last
+night's backup).
 
 I'd also like to introduce anonymizing of data into the workflow - though we'll
 do that via a new image.
 
-[k8s-jobs]: (http://kubernetes.io/docs/user-guide/jobs/)
+[k8s-jobs]: http://kubernetes.io/docs/user-guide/jobs/
 [openvpn-image]: https://github.com/ployst/docker-openvpn-k8s
 [pg-backup-dockerhub]: https://hub.docker.com/r/ployst/postgres-backup
 [pg-backup-github]: https://github.com/ployst/docker-postgres-backup
