@@ -5,6 +5,7 @@ date:   2015-12-22 18:19:53 +0000
 categories: development
 author: Alex Couper
 tags: kubernetes
+comments: true
 ---
 
 Below I will describe an approach as to how to get a proxy running that handles
