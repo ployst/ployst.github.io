@@ -5,6 +5,7 @@ date:   2016-01-27 21:54:34 +0000
 categories: product
 author: Alex Couper
 tags: design
+comments: true
 ---
 
 We've been through a few iterations on the logo design and can finally reveal

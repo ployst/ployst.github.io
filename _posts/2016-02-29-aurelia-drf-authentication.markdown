@@ -5,6 +5,7 @@ date:   2016-02-29 16:00:00 +0000
 categories: development
 author: Carles Barrobés
 tags: aurelia
+comments: true
 ---
 
 This is the first article in a series that will describe some of

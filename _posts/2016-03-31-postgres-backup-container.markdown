@@ -5,6 +5,7 @@ date:   2016-03-31 19:45:53 +0000
 categories: development
 author: Alex Couper
 tags: kubernetes docker postgres
+comments: true
 ---
 
 #### Introducing [postgres-backup][pg-backup-github]: A docker image that allows us to clone postgres databases for easy testing.
