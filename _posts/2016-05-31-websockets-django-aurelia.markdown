@@ -1,9 +1,9 @@
 ---
 layout: post
 title:  "Websockets with Aurelia and Django Channels"
-date:   2016-05-29 19:45:53 +0000
+date:   2016-05-31 17:15:53 +0000
 categories: development
-author: Alex Couper
+author: Alex Couper, Carles Barrobés
 tags: aurelia django websockets
 ---
 
@@ -22,7 +22,7 @@ application state.
 
 If you're not familiar with Channels, you may benefit from reading [Channels Concepts ](https://channels.readthedocs.io/en/latest/concepts.html) first.
 
-# Basic config
+## Basic config
 
 We use Redis to handle the messaging between interface and worker servers, so
 our `CHANNEL_LAYERS` looks like this:
@@ -65,17 +65,17 @@ land in that we're not using the Django sessions layer so there's no built in
 way of knowing which user a connection belongs to.
 
 {% highlight js %}
-    connect() {
-        let token = this.authentication.getToken();
-        if ( !token ) {
-            return;
-        }
-        this.socket = new WebSocket(config.wsBaseUrl + '?JWT=' + token);
-        this.socket.onmessage = (e) => {this.onmessage(e);};
-        this.socket.onclose = (e) => {this.onclose(e);};
-        this.socket.onerror = (e) => {this.onerror(e);};
-        this.socket.onopen = (e) => {this.onopen(e);};
+connect() {
+    let token = this.authentication.getToken();
+    if ( !token ) {
+        return;
     }
+    this.socket = new WebSocket(config.wsBaseUrl + '?JWT=' + token);
+    this.socket.onmessage = (e) => {this.onmessage(e);};
+    this.socket.onclose = (e) => {this.onclose(e);};
+    this.socket.onerror = (e) => {this.onerror(e);};
+    this.socket.onopen = (e) => {this.onopen(e);};
+}
 {% endhighlight %}
 
 The `connect()` method passes in the JWT token as part of the WebSocket path
@@ -111,6 +111,7 @@ def ws_connect(message):
         action(message)
 {% endhighlight %}
 
+
 ## Handling disconnects
 
 The front end handles disconnects by retrying to open the WebSocket at
@@ -143,7 +144,8 @@ publish events on both open and close of a WebSocket.
     }
 {% endhighlight %}
 
-### Extra: Production Configuration
+
+## Extra: Production Configuration
 
 We're running on Kubernetes, so we have a set of asgi interface containers
 running behind [nginx-ssl-proxy](https://github.com/ployst/docker-nginx-ssl-proxy)
@@ -152,5 +154,5 @@ that put requests into Redis.
 We have a set of worker containers consuming from Redis and forming
 responses.
 
-We've chosen to use the identical image base, but we run with different
+We've chosen to use the same docker image for both, but we run with different
 commands in Kubernetes for each.
