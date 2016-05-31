@@ -5,6 +5,7 @@ date:   2016-05-31 17:15:53 +0000
 categories: development
 author: Alex Couper, Carles Barrobés
 tags: aurelia django websockets
+comments: true
 ---
 
 WebSockets are awesome.
