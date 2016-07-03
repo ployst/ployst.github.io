@@ -20,7 +20,7 @@ mean how every element that is bound to appear in more
 than one place in our UI should be encapsulated into its
 own component. And even things that will not appear in
 more than one place, but represent a distinct visual
-component.
+or interface function.
 
 No matter how insignificant one such component may seem,
 chances are it will grow and evolve in the future. You want
@@ -33,7 +33,7 @@ implemented as a checkbox directly as part of a stream
 component (e.g. the stream card we use when we display a list
 of available streams). But once that code (both presentational
 and behavioural) starts getting mixed
-up in the stream component, it becomes hard to reuse - we 
+up in the stream component, it becomes hard to reuse - we
 all know that when in a hurry, some developers may be tempted
 to use "reuse by copy paste" and end up with a harder to
 maintain codebase, inconsistent presentation etc.
@@ -103,16 +103,19 @@ actual HTML tags, classes etc.
 
 ## The case of our Follow button
 
-We decided to make the follow button its own component since
+We decided to make the follow button its own component from
 the beginning. This was probably the first instance of an element that
 was very simple, only used in one place, but had potential for
-growing and becoming more pervasive. 
+growing and becoming more pervasive.
 
 Its apperance was naive (a bootstrap button), and the code was simple
 enough. These were the off and on states:
 
 ![Follow](/assets/images/follow.png)
 ![Following](/assets/images/following.png)
+
+
+This was the original code for the view and view-model:
 
 {% highlight html %}
 <!-- follow-button.html -->
@@ -128,6 +131,7 @@ enough. These were the off and on states:
 
 
 {% highlight js %}
+// follow-button.js
 import {bindable, inject} from 'aurelia-framework';
 import {Api} from '../services/api';
 
@@ -150,7 +154,7 @@ export class FollowButton{
 {% endhighlight %}
 
 
-The place where we were using this button needed:
+And this is what is needed to use this button:
 
 
 {% highlight html %}
