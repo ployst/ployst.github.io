@@ -56,12 +56,12 @@ One of the key points of Aurelia is that if your component
 doesn't (yet) have any behaviour that requires Javascript, you
 can start with just the HTML file. This is great because you
 can draft all of the presentational aspects of your
-functionality first using small specialised components, and add
+functionality up front by using small specialised components, and add
 behaviour later as required.
-With this in mind, there is no excuse not to have very small
-specialised components. This helps you avoid spaghetti
+With this in mind, there is no excuse not to have these
+components in place from early on. This helps you avoid spaghetti
 markup and have everything broken down into much simpler
-components.
+units.
 
 This, as an example, is our `blip-card.html`, where we display
 a *blip* (the basic abstraction for any type of message in
