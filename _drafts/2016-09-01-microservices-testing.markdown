@@ -87,7 +87,7 @@ The build tool adds component-based labels to the pull request and reports back 
 
 ## Standards
 
-To build good tooling for our repo, we need to have a "contract" that each
+To build good tooling for our repo, we need to have a "build contract" that each
 service adheres to. We call this the application-developer-interface (ADI), but
 really it's the requirement that:
  - If the service wants to be built as part of a circle run it needs:
@@ -164,15 +164,77 @@ deployment:
       - ployst tag
 ```
 
-We have templated yaml files that can have things like `DOCKER_TAG` env variables
-injected at deploy time (so we can upgrade components to the version we've just
-pushed).
+`deployer deploy` can deploy dynamically rendered templates, and auto apply
+static deployments. It is configured via `deployer.ini`.
 
-We also hold static config files of deployments that are applied on every
-release via `kubectl apply -f $AUTO_RELEASE_DIR`. This keep things like service definitions, openvpn deployment definition etc in here - allowing our entire
-application to be changeable via a single PR.
+```
+$ cat deployer.ini
+[deployer]
+auto_release_dir=deployments/auto
+templates_dir=deployments/templates
 
-It is the deployer's job to populate the relevant templates and apply them to production.
+[ployst-mailer]
+image=ployst-mailer
+template_args=REPLICAS=1,MODE=live
+
+...
+```
+
+## Dynamic Components (ie build dependent)
+
+When running automatically on a master build, things like tag of the image
+isn't known ahead of time. We use the CircleCI build number as the `DOCKER_TAG`
+for all our images.
+This means we need a template that can be rendered on the fly at deploy time.
+
+Each component defined in deployer.ini will have its corresponding template
+rendered using the env variables available and any additional template_args.
+
+An example templated file is for the mailer:
+
+```
+$ cat operations/production/deployments/templates/ployst-mailer.yaml.erb
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: <%= ENV['APP'] %>-<%= ENV['MODE'] %>-deployment
+spec:
+  replicas: <%= ENV['REPLICAS'] %>
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: <%= ENV['APP'] %>
+        mode: <%= ENV['MODE'] %>
+    spec:
+      containers:
+      - name: ployst-mailer
+        image: eu.gcr.io/ployst-proto/ployst-mailer:<%= ENV['DOCKER_TAG'] %>
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: RUN_MODE
+          value: <%= ENV['MODE'] %>
+```
+
+The deployer renders this:
+```
+MODE=$MODE APP=$APP REPLICAS=$REPLICAS erb -r $ABS_TEMPLATES_PATH/templating $ABS_TEMPLATES_PATH/$DEPLOY_TEMPLATE > /tmp/${DEPLOY_TEMPLATE}_rendered
+```
+
+And then fires off the rendered yaml to Kubernetes:
+
+```
+cat /tmp/${DEPLOY_TEMPLATE}_rendered | kubectl apply -f -
+```
+
+## External, Static Components
+
+Some components are static, or pre-determined. For example we have a OpenVPN container
+that uses an image from docker hub. To upgrade this image we create a pull request that
+includes an upgraded image tag and the deployer will release it on a master branch build
+via `kubectl apply -f $AUTO_RELEASE_DIR`.
+
 
 # Monitoring
 
