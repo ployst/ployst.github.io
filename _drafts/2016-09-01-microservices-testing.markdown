@@ -246,13 +246,14 @@ and perform some basic performance monitoring.
 The error handling is decent but the performance monitoring probably isn't in depth
 enough in the long run so we'll need to augment it with other services.
 
-# Future
+# Future Improvements
 
 We're really happy with the single repo, "change lots of things at once" approach.
 
-I can foresee problems occurring with the all-or-nothing access control that we
-have. A workaround may be to have a couple of repos that map one-to-one with
-access control groups.
+However, it does mean that if someone has access to one component,
+they have access to everything (even deployment definitions). I can foresee this
+being less than ideal for some companies. A workaround may be to have n repos
+that map one-to-one with your desired access control groups.
 
 We're firing from the hip in the way we're rolling out changes to services/deployments
 in the sense that we haven't automated the testing of a new set of kubernetes
